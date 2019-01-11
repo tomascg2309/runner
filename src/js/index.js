@@ -2,7 +2,7 @@ import Player from './Player.js'
 import HudManager from './Scenario/HudManager.js'
 import BackgroundManager from './Scenario/BackgroundManager.js'
 import PlatformManager from './Scenario/PlatformManager.js'
-import Gravity from './Physics/Gravity.js'
+import PhysicalVector from './Physics/PhysicalVector.js'
 
 /*=============================================
 ANIMACION REQUEST ANIMATION FRAME
@@ -16,27 +16,29 @@ var frame = window.requestAnimationFrame ||
 var canvas = document.querySelector("#canvas");
 var ctx = canvas.getContext("2d");
 
-var player = new Player ({
-    x: 100,
-	y: 120,
-	// y: 235,
-	width: 40,
-    height: 60,
-	image_source: "src/img/player/player-hover.png",
-	movement_x: 0,
-	movement_y: 0
-})
-
 var hudManager = new HudManager();
 var backgroundManager = new BackgroundManager();
 var platformManager = new PlatformManager(canvas);
 
-var global = {
+var game_variables = {
 	jump: false,
-	gravity: new Gravity(),
+	gravity: new PhysicalVector({x:0,y:0.25}),
+	game_speed: 15,
 	time: 0,
 	frames: 0
 };
+
+const player_initial_state = {
+	position: new PhysicalVector ({x:100,y:120}), // y: 235,
+	speed: new PhysicalVector({x:0,y:0}),
+	acceleration: game_variables.gravity,
+	on_air: true,
+	width: 40,
+    height: 60,
+	image_source: "src/img/player/player-hover.png"
+};
+
+var player = new Player (player_initial_state);
 
 var game = {
 
@@ -48,29 +50,37 @@ var game = {
 	press: function(key){
 		key.preventDefault();
 		switch(key.keyCode){
-			case 38: global.jump = true; break;
-			case 32: global.jump = true; break;
+			case 38: game_variables.jump = true; break;
+			case 32: game_variables.jump = true; break;
 		}
 	},
 
 	release: function(key){
 		key.preventDefault();
 		switch(key.keyCode){
-			case 38: global.jump = false; break;
-			case 32: global.jump = false; break;
+			case 38: game_variables.jump = false; break;
+			case 32: game_variables.jump = false; break;
 		}
 	},
 
 	time: function(){
-		if(global.frames < 59){
-			global.frames ++;
-		}else{
-			global.time ++;
-			global.frames = 0;
-		}
-		
 		game.canvas();
-		console.log(global.time);
+		
+		console.log(player.speed.y);
+		if(game_variables.frames < 59){
+			game_variables.frames ++;
+		}else{
+			game_variables.time ++;
+			game_variables.frames = 0;
+			//player = new Player (player_initial_state);
+		}
+
+		if(player.position.y>=235){
+			player.speed.y = -7.5;
+			// player.on_air = false;
+		}	
+		player.move();
+
 		frame(game.time)
    	},
 
