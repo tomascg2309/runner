@@ -1,13 +1,12 @@
-import PhysicalVector from './Physics/PhysicalVector.js'
+import PhysicalObject from './Physics/PhysicalObject.js'
 
-class Player{
+class Player extends PhysicalObject{
 	
 	constructor(params){
 		// Physical Magnitudes
-		this.position = new PhysicalVector(params.position);
-		this.speed = new PhysicalVector(params.speed);
-		this.acceleration = new PhysicalVector(params.acceleration);
-		this.on_air = params.on_air;
+		super(params.position,params.speed,params.acceleration);
+		// super(params.position,params.speed,params.acceleration,0,0.25,Math.PI/30);
+		this.affectedByGravity = params.affectedByGravity;
 		// Character attributes
 		this.width = params.width;
 		this.height = params.height;
@@ -20,11 +19,10 @@ class Player{
 	}
 
 	move(){
-		if(!this.on_air){
+		if(!this.affectedByGravity){
 			this.speed.y = 0;
 		}
-		this.speed.addTo(this.acceleration);
-		this.position.addTo(this.speed);
+		super.uarm();
 	}
 }
 

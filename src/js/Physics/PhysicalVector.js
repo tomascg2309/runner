@@ -8,6 +8,11 @@ class PhysicalVector{
         this.x += vector2.x;
         this.y += vector2.y;
     }
+
+    multiplyBy(scalar){
+        this.x *= scalar;
+        this.y *= scalar;
+    }
 }
 
 export default PhysicalVector;

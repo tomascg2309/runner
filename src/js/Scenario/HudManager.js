@@ -1,21 +1,22 @@
+import PhysicalObject from '../Physics/PhysicalObject.js'
 import GameLayer from '../GameLayer.js'
 
-class HudManager{
+class HudManager extends PhysicalObject{
 	
-	constructor(){
-		this.screens = [
-			new GameLayer('level-1','src/img/screen/screen-level-1.png'),
-		];
-		this.default_position = {x:0, y:0};
+	constructor(opt){
+		super(opt.position)
+		this.huds = [];
 	}
 
-	show(ctx,screen_id,opacity = 1){		
-		let screen = this.screens.find(function(e){
-			return e.id = screen_id;
-		});
+	show(id,ctx,opacity = 1){		
+		let hud = this.huds.find(e => e.id === id);
 		ctx.globalAlpha = opacity;
-		ctx.drawImage(screen.image,this.default_position.x,this.default_position.y);
+		ctx.drawImage(hud.image,this.position.x,this.position.y);
 		ctx.globalAlpha = 1;
+	}
+
+	addHud(hud){
+		this.huds.push(new GameLayer(hud.id,hud.image_source));
 	}
 }
 

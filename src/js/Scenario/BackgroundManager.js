@@ -1,28 +1,22 @@
+import PhysicalObject from '../Physics/PhysicalObject.js'
 import GameLayer from '../GameLayer.js'
 
-class BackgroundManager{
+class BackgroundManager extends PhysicalObject{
 	
-	constructor(speed){
-		this.backgrounds = [
-			new GameLayer('level-1','src/img/background/bg-purple.png'),
-		];
-		this.default_position = {x:0, y:64};
-		this.speed = 0;
-		this.speedWhenStopped = speed;
+	constructor(opt){
+		super(opt.position, opt.speed)
+		this.backgrounds = [];
 	}
 
-	show(ctx,screen_id,opacity = 1){		
-		let background = this.backgrounds.find(function(e){
-			return e.id = screen_id;
-		});
+	show(id,ctx,opacity = 1){
+		let background = this.backgrounds.find(e => e.id === id);
 		ctx.globalAlpha = opacity;
-		ctx.drawImage(background.image,this.default_position.x,this.default_position.y);
+		ctx.drawImage(background.image,this.position.x,this.position.y);
 		ctx.globalAlpha = 1;
 	}
-
-	changeMovement(){
-		this.speed = this.speedWhenStopped;
-		this.speedWhenStopped = this.speed;
+	
+	addBackground(background){
+		this.backgrounds.push(new GameLayer(background.id,background.image_source));
 	}
 }
 
