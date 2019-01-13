@@ -10,6 +10,21 @@ class PhysicalObject{
         this.angular_velocity = angular_velocity||0;     
     }
     
+    setPosition(x,y){
+        this.position.x = x;
+        this.position.y = y;
+    }
+
+    setSpeed(x,y){
+        this.speed.x = x;
+        this.speed.y = y;
+    }
+
+    setAcceleration(x,y){
+        this.acceleration.x = x;
+        this.acceleration.y = y;
+    }
+    
     // Uniformly Accelerated Rectilinear Motion
     uarm(){
         this.speed.addTo(this.acceleration);
@@ -38,9 +53,11 @@ class PhysicalObject{
     }
 
     // Stop
-    stop(){
-        this.speed = new PhysicalVector({x:0,y:0});
-        this.acceleration = new PhysicalVector({x:0,y:0});
+    stop(axis){
+        switch(axis){
+            case 'x': this.speed.x = 0; this.acceleration.x = 0; break;
+            case 'y': this.speed.y = 0; this.acceleration.y = 0; break;
+        }
         this.angular_velocity = 0;
     }
 }

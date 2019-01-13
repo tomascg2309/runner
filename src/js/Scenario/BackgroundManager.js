@@ -1,5 +1,5 @@
 import PhysicalObject from '../Physics/PhysicalObject.js'
-import GameLayer from '../GameLayer.js'
+import GameAsset from '../GameAsset.js'
 
 class BackgroundManager extends PhysicalObject{
 	
@@ -16,7 +16,7 @@ class BackgroundManager extends PhysicalObject{
 	}
 	
 	addBackground(background){
-		this.backgrounds.push(new GameLayer(background.id,background.image_source));
+		this.backgrounds.push(new GameAsset(background.id,background.image_source));
 	}
 }
 

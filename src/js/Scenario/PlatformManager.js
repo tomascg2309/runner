@@ -1,18 +1,17 @@
-class PlatformManager{
+import PhysicalObject from '../Physics/PhysicalObject.js'
+
+class PlatformManager extends PhysicalObject{
 	
-	constructor(canvas){
-		this.width = canvas.width;
-		this.height = 65;
-		this.default_position = {
-			x: 0, 
-			y: canvas.height - this.height
-		};
+	constructor(opt){
+		super(opt.position)
+		this.width = opt.width;
+		this.height = opt.height;
 		this.playerOnGame = false;
 	}
 
 	draw(ctx,opacity = 1){		
 		ctx.fillStyle = 'rgba(255,0,0,'+opacity+')';
-		ctx.fillRect(this.default_position.x,this.default_position.y,this.width,this.height);
+		ctx.fillRect(this.position.x,this.position.y,this.width,this.height);
 	}
 
 	playerOnGame(){

@@ -1,4 +1,4 @@
-class GameLayer{
+class GameAsset{
 	
 	constructor(id,source){
 		this.id = id;
@@ -7,4 +7,4 @@ class GameLayer{
 	}
 }
 
-export default GameLayer;
+export default GameAsset;

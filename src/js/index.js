@@ -1,8 +1,7 @@
-import Player from './Player.js'
+import Player from './GameObject/Player.js'
 import HudManager from './Scenario/HudManager.js'
 import BackgroundManager from './Scenario/BackgroundManager.js'
 import PlatformManager from './Scenario/PlatformManager.js'
-import PhysicalVector from './Physics/PhysicalVector.js'
 
 var frame = window.requestAnimationFrame || 
 		    window.mozRequestAnimationFrame || 
@@ -16,7 +15,7 @@ var ctx = canvas.getContext("2d");
 
 var game_variables = {
 	jump: false,
-	gravity: new PhysicalVector({x:0,y:0.25}),
+	gravity: {x:0,y:0.25},
 	time: 0,
 	frames: 0,
 	lvl: 'level-2'
@@ -49,21 +48,36 @@ backgroundManager.addBackground({id:'level-3',image_source:'src/img/background/b
 
 /* PLATFORM CONFIGURATION */
 
-var platformManager = new PlatformManager(canvas);
+const platform_initial_state = {
+	position: {x:0,y:canvas.height-65},
+	height:65,
+	width:canvas.width
+}
+
+var platformManager = new PlatformManager(platform_initial_state);
+
+console.log(platformManager);
 
 /* PLAYER CONFIGURATION */
 
 const player_initial_state = {
-	position: new PhysicalVector ({x:100,y:120}), // y: 235,
-	speed: new PhysicalVector({x:0,y:0}),
+	position: {x:100,y:120}, // y: 235,
+	speed: {x:0,y:0},
 	acceleration: game_variables.gravity,
+	gravity: game_variables.gravity,
 	affectedByGravity: true,
-	width: 40,
-    height: 60,
-	image_source: "src/img/player/player-hover.png"
+	action: "hover",
+	frame_impulse: 0,
+	frame_impulse_limit: 15,
+	jumps: 1,
+	jump_limit: 1,
+	jump_speed: -6
 };
 
 var player = new Player (player_initial_state);
+
+player.addSkin({id:'hover',image_source:'src/img/player/player-hover.png',});
+player.addSkin({id:'jump',image_source:'src/img/player/player-jump.png'});
 
 /* GAME */
 
@@ -85,8 +99,8 @@ var game = {
 	release: function(key){
 		key.preventDefault();
 		switch(key.keyCode){
-			case 38: game_variables.jump = false; break;
-			case 32: game_variables.jump = false; break;
+			case 38: game_variables.jump = false; player.jumpPerformed(); break;
+			case 32: game_variables.jump = false; player.jumpPerformed(); break;
 		}
 	},
 
@@ -100,10 +114,18 @@ var game = {
 			game_variables.frames = 0;
 		}
 
-		if(player.position.y>=235){
-			player.speed.y = -7.5;
+		if(player.collisionWith(platformManager)){
+			player.land();
+		}
+
+		if(game_variables.jump){
+			let playerBreaksFrameImpulse = player.breakFrameImpulse();
+			if(!playerBreaksFrameImpulse && player.canJump()){
+				player.jump();
+			}
 		}	
 		player.move();
+		console.log(player.collisionWith(platformManager));
 
 		frame(game.time)
    	},
@@ -111,12 +133,12 @@ var game = {
    canvas: function(){
 
 	    ctx.clearRect(0,0,canvas.width,canvas.height);
-	   	backgroundManager.show(game_variables.lvl,ctx,1);
+	   	backgroundManager.show(game_variables.lvl,ctx);
 		platformManager.draw(ctx,0);
 		player.draw(ctx);
-		hudManager.show(game_variables.lvl,ctx,0.5);
+		hudManager.show(game_variables.lvl,ctx);
    }
-   
+
 }
 
 game.keyboard();

@@ -1,5 +1,5 @@
 import PhysicalObject from '../Physics/PhysicalObject.js'
-import GameLayer from '../GameLayer.js'
+import GameAsset from '../GameAsset.js'
 
 class HudManager extends PhysicalObject{
 	
@@ -16,7 +16,7 @@ class HudManager extends PhysicalObject{
 	}
 
 	addHud(hud){
-		this.huds.push(new GameLayer(hud.id,hud.image_source));
+		this.huds.push(new GameAsset(hud.id,hud.image_source));
 	}
 }
 
