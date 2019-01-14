@@ -2,7 +2,8 @@ import PhysicalVector from './PhysicalVector.js'
 
 class PhysicalObject{
     constructor(position,speed,acceleration,teta,angular_velocity,motion_radius){
-        this.position = new PhysicalVector(position||{x:0,y:0}) ;
+        this.position = new PhysicalVector(position||{x:0,y:0});
+        this._position = new PhysicalVector(position||{x:0,y:0});
         this.speed = new PhysicalVector(speed||{x:0,y:0});
         this.acceleration = new PhysicalVector(acceleration||{x:0,y:0});
         this.teta = teta||0;
@@ -39,16 +40,16 @@ class PhysicalObject{
     // Uniform Circular Motion
     ucm(){
         this.teta += this.angular_velocity;
-        this.position.x += this.motion_radius*Math.cos(this.teta);
-        this.position.y += this.motion_radius*Math.sin(this.teta);
+        this.position.x = this._position.x + this.motion_radius*Math.cos(this.teta);
+        this.position.y = this._position.y + this.motion_radius*Math.sin(this.teta);
     }
 
     // Simple Harmonic Motion
     shm(axis){
         this.teta += this.angular_velocity;
         switch(axis){
-            case 'x': this.position.x += this.motion_radius*Math.cos(this.teta); break;
-            case 'y': this.position.y += this.motion_radius*Math.sin(this.teta); break;
+            case 'x': this.position.x = this._position.x + this.motion_radius*Math.cos(this.teta); break;
+            case 'y': this.position.y = this._position.y + this.motion_radius*Math.sin(this.teta); break;
         }
     }
 

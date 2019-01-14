@@ -1,4 +1,4 @@
-import PhysicalObject from '../Physics/PhysicalObject.js'
+import PhysicalObject from '../Base/PhysicalObject.js'
 
 class PlatformManager extends PhysicalObject{
 	

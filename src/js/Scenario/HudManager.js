@@ -1,5 +1,5 @@
-import PhysicalObject from '../Physics/PhysicalObject.js'
-import GameAsset from '../GameAsset.js'
+import PhysicalObject from '../Base/PhysicalObject.js'
+import GameAsset from '../Base/GameAsset.js'
 
 class HudManager extends PhysicalObject{
 	
@@ -8,10 +8,13 @@ class HudManager extends PhysicalObject{
 		this.huds = [];
 	}
 
-	show(id,ctx,opacity = 1){		
-		let hud = this.huds.find(e => e.id === id);
+	getHudImage(id){
+		return this.huds.find(e => e.id === id).image;
+	}
+	
+	show(id,ctx,opacity = 1){
 		ctx.globalAlpha = opacity;
-		ctx.drawImage(hud.image,this.position.x,this.position.y);
+		ctx.drawImage(this.getHudImage(id),this.position.x,this.position.y);
 		ctx.globalAlpha = 1;
 	}
 

@@ -1,5 +1,5 @@
-import PhysicalObject from '../Physics/PhysicalObject.js'
-import GameAsset from '../GameAsset.js'
+import PhysicalObject from '../Base/PhysicalObject.js'
+import GameAsset from '../Base/GameAsset.js'
 
 class Player extends PhysicalObject{
 	
@@ -17,15 +17,24 @@ class Player extends PhysicalObject{
 		this.jumps = opt.jumps;
 		this.jump_limit = opt.jump_limit;
 		this.jump_speed = opt.jump_speed;
+		this.onGame = false;
+		this.movesOnScreen = opt.movesOnScreen;
 	}
 	
-	getSkin(){
-		return this.skins.find(e => e.id === this.action);
+	isOnGame(){
+		return this.onGame;
+	}
+
+	nowOnGame(){
+		this.onGame = true;
+	}
+	
+	getSkinImage(){
+		return this.skins.find(e => e.id === this.action).image;
 	}
 	
 	draw(ctx){
-		let skin = this.getSkin();
-		ctx.drawImage(skin.image,this.position.x,this.position.y);
+		ctx.drawImage(this.getSkinImage(),this.position.x,this.position.y);
 	}
 
 	addSkin(skin){
@@ -36,19 +45,28 @@ class Player extends PhysicalObject{
 		super.uarm();
 	}
 
-	land(){
+	land(platformManager){
+		this.nowOnGame();
 		this.jumps = 0;
 		this.frame_impulse = 0;
-		this.setAction('hover');
 		this.affectedByGravity = false;
 		super.stop('y');
+		let skin = this.getSkinImage();
+		this.position.y = platformManager.position.y - skin.height;
 	}
 
 	jump(){
-		this.setAction('jump');
 		this.affectedByGravity = true;
 		super.setSpeed(this.speed.x,this.jump_speed);
 		super.setAcceleration(this.acceleration.x,this.gravity.y);
+	}
+
+	animation(){
+		if(this.speed.y<0){
+			this.action = 'jump';
+		}else if(this.speed.y>=-this.jump_speed*0.9){
+			this.action = 'hover';
+		}
 	}
 	
 	jumpPerformed(){
@@ -69,16 +87,16 @@ class Player extends PhysicalObject{
 	}
 
 	collisionWith(obj){
-		var skin = this.getSkin();
+		var skin = this.getSkinImage();
 
 		//No colisión con plataforma de Arriba hacia Abajo
-		if((this.position.y + skin.image.height) < obj.position.y){return false}
+		if((this.position.y + skin.height) < obj.position.y){return false}
 
 		//No colisión con plataforma de Abajo hacia Arriba
 		if(this.position.y > (obj.position.y + obj.height)){return false}
 
 		//No colisión con plataforma de Izquierda a Derecha
-		if((this.position.x + skin.image.width) < obj.position.x){return false}
+		if((this.position.x + skin.width) < obj.position.x){return false}
 
 		//No colisión con plataforma de Derecha a Izquierda
 		if(this.position.x > (obj.position.x + obj.width)){return false}

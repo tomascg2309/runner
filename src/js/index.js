@@ -18,7 +18,9 @@ var game_variables = {
 	gravity: {x:0,y:0.25},
 	time: 0,
 	frames: 0,
-	lvl: 'level-2'
+	lvl: 'level-2',
+	speed: {x:-1,y:0},
+	playerMovesOnScreen: true
 };
 
 /* HUD CONFIGURATION */
@@ -36,8 +38,7 @@ hudManager.addHud({id:'level-3',image_source:'src/img/screen/screen-level-3.png'
 /* BACKGROUND CONFIGURATION */
 
 const background_options = {
-	position: {x:0,y:64},
-	speed: {x:5,y:0}
+	position: {x:0,y:64}
 }
 
 var backgroundManager = new BackgroundManager(background_options);
@@ -71,7 +72,8 @@ const player_initial_state = {
 	frame_impulse_limit: 15,
 	jumps: 1,
 	jump_limit: 1,
-	jump_speed: -6
+	jump_speed: -6,
+	movesOnScreen: game_variables.playerMovesOnScreen
 };
 
 var player = new Player (player_initial_state);
@@ -104,6 +106,8 @@ var game = {
 		}
 	},
 
+	// Define movement type
+
 	time: function(){
 		game.canvas();
 		
@@ -115,7 +119,7 @@ var game = {
 		}
 
 		if(player.collisionWith(platformManager)){
-			player.land();
+			player.land(platformManager);
 		}
 
 		if(game_variables.jump){
@@ -123,11 +127,25 @@ var game = {
 			if(!playerBreaksFrameImpulse && player.canJump()){
 				player.jump();
 			}
-		}	
-		player.move();
-		console.log(player.collisionWith(platformManager));
+		}
 
-		frame(game.time)
+		if(player.isOnGame()){
+			if(game_variables.playerMovesOnScreen){
+				player.setSpeed(game_variables.speed.x*(-1),game_variables.speed.y*(-1));
+
+			}else{
+			backgroundManager.setSpeed(game_variables.speed.x,game_variables.speed.y);
+			}
+		}
+
+		player.move();
+		if(player.isOnGame()){
+			backgroundManager.move();
+		}
+
+		console.log(backgroundManager.speed.x);
+
+		frame(game.time);
    	},
 
    canvas: function(){
@@ -135,6 +153,7 @@ var game = {
 	    ctx.clearRect(0,0,canvas.width,canvas.height);
 	   	backgroundManager.show(game_variables.lvl,ctx);
 		platformManager.draw(ctx,0);
+		player.animation();
 		player.draw(ctx);
 		hudManager.show(game_variables.lvl,ctx);
    }
