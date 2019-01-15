@@ -19,7 +19,7 @@ var game_variables = {
 	time: 0,
 	frames: 0,
 	lvl: 'level-2',
-	speed: {x:-1,y:0},
+	speed: {x:-4,y:0},
 	playerMovesOnScreen: false
 };
 
@@ -121,15 +121,15 @@ var game = {
 		}
 
 		if(game_variables.jump){
-			let playerBreaksFrameImpulse = player.breakFrameImpulse();
-			if(!playerBreaksFrameImpulse && player.canJump()){
+			player.impulseJump();
+			if(!player.breakFrameImpulse() && player.canJump()){
 				player.jump();
 			}
 		}
 
 		if(player.isOnGame()){
 			if(game_variables.playerMovesOnScreen){
-				player.setSpeed(game_variables.speed.x*(-1),game_variables.speed.y*(-1));
+				player.setSpeed(game_variables.speed.x*(-1),player.getSpeed().y);
 				backgroundManager.setSpeed(0,backgroundManager.getSpeed().y);
 			}else{
 				backgroundManager.setSpeed(game_variables.speed.x,game_variables.speed.y);
@@ -142,13 +142,14 @@ var game = {
 			backgroundManager.move();
 		}
 
+		console.log(player.position.x);
 		frame(game.time);
    	},
 
    canvas: function(){
 
 	    ctx.clearRect(0,0,canvas.width,canvas.height);
-	   	backgroundManager.show(game_variables.lvl,ctx);
+	   	backgroundManager.show(game_variables.lvl,ctx,canvas);
 		platformManager.draw(ctx,0);
 		player.animation();
 		player.draw(ctx);

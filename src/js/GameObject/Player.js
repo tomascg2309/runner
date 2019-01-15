@@ -30,11 +30,28 @@ class Player extends PhysicalObject{
 	}
 	
 	getSkinImage(){
-		return this.skins.find(e => e.id === this.action).image;
+		// An action started with 'inv' is an 'x' rotated image of an original action
+		if(this.action.substr(0,4) == 'inv-'){
+			let original_action = this.action.substr(4,this.action.length-4);
+			return this.skins.find(e => e.id === original_action).image;
+		}else{
+			return this.skins.find(e => e.id === this.action).image;
+		}
 	}
 	
 	draw(ctx){
-		ctx.drawImage(this.getSkinImage(),this.position.x,this.position.y);
+		let skin = this.getSkinImage();
+		ctx.save();
+		if(this.action.substr(0,4) == 'inv-'){
+			// To perform a rotation, we need to make a mirror on the canvas
+			ctx.scale(-1,1); // -1 indicates a mirror on 'x' axis
+			// Rules to draw the image also change
+			ctx.drawImage(skin,-(this.position.x+skin.width),this.position.y);
+			ctx.restore();
+		}else{
+			ctx.drawImage(skin,this.position.x,this.position.y);
+		}
+		
 	}
 
 	addSkin(skin){
@@ -62,7 +79,14 @@ class Player extends PhysicalObject{
 	}
 
 	animation(){
-		if(this.speed.y<0){
+		if(this.breakFrameImpulse()){
+			if(this.speed.y == 0){
+				this.action = 'inv-jump';
+			}else if(this.speed.y>=-this.jump_speed*0.5){
+				this.action = 'jump';
+			}
+		}
+		if(this.speed.y < 0){
 			this.action = 'jump';
 		}else if(this.speed.y>=-this.jump_speed*0.9){
 			this.action = 'hover';
@@ -81,8 +105,11 @@ class Player extends PhysicalObject{
 		this.action = action;
 	}
 
-	breakFrameImpulse(){
+	impulseJump(){
 		this.frame_impulse++;
+	}
+	
+	breakFrameImpulse(){
 		return this.frame_impulse > this.frame_impulse_limit;
 	}
 

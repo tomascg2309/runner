@@ -12,9 +12,24 @@ class BackgroundManager extends PhysicalObject{
 		return this.backgrounds.find(e => e.id === id).image;
 	}
 
-	show(id,ctx,opacity = 1){
+	show(id,ctx,canvas,opacity = 1){
+		let background = this.getBackgroundImage(id);
 		ctx.globalAlpha = opacity;
-		ctx.drawImage(this.getBackgroundImage(id),this.position.x,this.position.y);
+
+		let fixed_x = this.position.x % canvas.width; // For sliding backgrounds
+		let support_x = canvas.width - Math.abs(fixed_x);
+		if(fixed_x<=0){
+			// Left Background
+			ctx.drawImage(background,-fixed_x,0,support_x,background.height,this._position.x,this._position.y,support_x,background.height);
+			// Right Background
+			ctx.drawImage(background,0,0,-fixed_x,background.height,support_x,this._position.y,-fixed_x,background.height);
+		}else{
+			// Left Background
+			ctx.drawImage(background,support_x,0,fixed_x,background.height,this._position.x,this._position.y,fixed_x,background.height);
+			// Right Background
+			ctx.drawImage(background,0,0,support_x,background.height,fixed_x,this._position.y,support_x,background.height);
+		}
+		
 		ctx.globalAlpha = 1;
 	}
 	

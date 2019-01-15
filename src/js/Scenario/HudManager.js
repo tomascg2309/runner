@@ -13,8 +13,9 @@ class HudManager extends PhysicalObject{
 	}
 	
 	show(id,ctx,opacity = 1){
+		let hud = this.getHudImage(id);
 		ctx.globalAlpha = opacity;
-		ctx.drawImage(this.getHudImage(id),this.position.x,this.position.y);
+		ctx.drawImage(hud,this.position.x,this.position.y);
 		ctx.globalAlpha = 1;
 	}
 
