@@ -2,6 +2,8 @@ import Player from './GameObject/Player.js'
 import HudManager from './Scenario/HudManager.js'
 import BackgroundManager from './Scenario/BackgroundManager.js'
 import PlatformManager from './Scenario/PlatformManager.js'
+import ObstacleManager from './GameObject/ObstacleManager.js'
+import CollectibleManager from './GameObject/CollectibleManager.js'
 
 var frame = window.requestAnimationFrame || 
 		    window.mozRequestAnimationFrame || 
@@ -20,7 +22,8 @@ var game_variables = {
 	frames: 0,
 	lvl: 'level-2',
 	speed: {x:-4,y:0},
-	playerMovesOnScreen: false
+	playerMovesOnScreen: false,
+	inmortality: false
 };
 
 /* HUD CONFIGURATION */
@@ -76,32 +79,94 @@ const player_initial_state = {
 
 var player = new Player (player_initial_state);
 
-player.addSkin({id:'hover',image_source:'src/img/player/player-hover.png',});
+player.addSkin({id:'hover',image_source:'src/img/player/player-hover.png'});
 player.addSkin({id:'jump',image_source:'src/img/player/player-jump.png'});
+
+/* OBSTACLE CONFIGURATION */
+
+const obstacleManager = new ObstacleManager();
+
+obstacleManager.addObstacleImage({id:'column',image_source:'src/img/obstacles/column.png'});
+obstacleManager.addObstacleImage({id:'rock',image_source:'src/img/obstacles/rock.png'});
+
+obstacleManager.addObstacleToGame({id:'rock',position:{x:1000,y:250}});
+obstacleManager.addObstacleToGame({id:'column',position:{x:1400,y:180}});
+obstacleManager.addObstacleToGame({id:'column',position:{x:1400,y:180}});
+
+/* OBSTACLE CONFIGURATION */
+
+const collectibleManager = new CollectibleManager();
+
+collectibleManager.addCollectibleImage({id:'clue-1',image_source:'src/img/clues/clue-1.png'});
+collectibleManager.addCollectibleImage({id:'clue-2',image_source:'src/img/clues/clue-2.png'});
+collectibleManager.addCollectibleImage({id:'clue-3',image_source:'src/img/clues/clue-3.png'});
+
+collectibleManager.addCollectibleToGame({id:'clue-1',position:{x:1200,y:250},collidable:!game_variables.inmortality});
+collectibleManager.addCollectibleToGame({id:'clue-2',position:{x:1600,y:180},collidable:!game_variables.inmortality});
+collectibleManager.addCollectibleToGame({id:'clue-3',position:{x:2000,y:250},collidable:!game_variables.inmortality});
 
 /* GAME */
 
 var game = {
 
-	keyboard: function(){
-	   document.addEventListener("keydown", game.press)
-	   document.addEventListener("keyup", game.release)
+	controllers: function(){
+	   document.addEventListener("keydown", game.press);
+	   document.addEventListener("keyup", game.release);
+	   document.addEventListener("mousedown",game.press);
+	   document.addEventListener("mouseup",game.release);
 	},
 
-	press: function(key){
-		key.preventDefault();
-		switch(key.keyCode){
-			case 38: game_variables.jump = true; break;
-			case 32: game_variables.jump = true; break;
+	press: function(event){
+		let keyboard_controllers = [32,38,87];
+		let mouse_controllers = [0];
+		event.preventDefault();
+
+		let tap = function(){
+			if(event.hasOwnProperty("keyCode")){
+				if(keyboard_controllers.indexOf(event.keyCode)>=0){ 
+					return true;
+				}
+			}
+			if(event.hasOwnProperty("button")){
+				if(mouse_controllers.indexOf(event.button)>=0){ 
+					return true;
+				}
+			}
 		}
+
+		if(tap){ 
+			game_variables.jump = true; 
+		}
+		
 	},
 
 	release: function(key){
-		key.preventDefault();
-		switch(key.keyCode){
-			case 38: game_variables.jump = false; player.jumpPerformed(); break;
-			case 32: game_variables.jump = false; player.jumpPerformed(); break;
+		let keyboard_controllers = [32,38,87];
+		let mouse_controllers = [0];
+		
+		event.preventDefault();
+
+		let free = function(){
+			if(event.hasOwnProperty("keyCode")){
+				if(keyboard_controllers.indexOf(event.keyCode)>=0){ 
+					return true;
+				}
+			}
+			if(event.hasOwnProperty("button")){
+				if(mouse_controllers.indexOf(event.button)>=0){ 
+					return true;
+				}
+			}
 		}
+
+		if(free){ 
+			game_variables.jump = false; 
+			player.jumpPerformed();
+		}
+	},
+
+	onScreen: function(object,object_image,canvas){
+		return object.position.x <= canvas.width || object.position.x + object_image.width <= 0;
 	},
 
 	// Define movement type
@@ -131,18 +196,31 @@ var game = {
 			if(game_variables.playerMovesOnScreen){
 				player.setSpeed(game_variables.speed.x*(-1),player.getSpeed().y);
 				backgroundManager.setSpeed(0,backgroundManager.getSpeed().y);
+				obstacleManager.obstacles.forEach(function(obstacle){
+					obstacle.obj.setSpeed(0,backgroundManager.getSpeed().y);
+				});
+				collectibleManager.collectibles.forEach(function(collectible){
+					collectible.obj.setSpeed(0,collectibleManager.getSpeed().y);
+				});
 			}else{
 				backgroundManager.setSpeed(game_variables.speed.x,game_variables.speed.y);
 				player.setSpeed(0,player.getSpeed().y);
+				obstacleManager.obstacles.forEach(function(obstacle){
+					obstacle.obj.setSpeed(game_variables.speed.x,game_variables.speed.y);
+				});
+				collectibleManager.collectibles.forEach(function(collectible){
+					collectible.obj.setSpeed(game_variables.speed.x,game_variables.speed.y);
+				});
 			}
 		}
 
 		player.move();
 		if(player.isOnGame()){
 			backgroundManager.move();
+			obstacleManager.move();
+			collectibleManager.move();
 		}
 
-		console.log(player.position.x);
 		frame(game.time);
    	},
 
@@ -153,10 +231,22 @@ var game = {
 		platformManager.draw(ctx,0);
 		player.animation();
 		player.draw(ctx);
-		hudManager.show(game_variables.lvl,ctx);
+		obstacleManager.obstacles.forEach(function(obstacle){
+			if(game.onScreen(obstacle.obj,obstacle.image,canvas)){
+				obstacleManager.draw(obstacle,ctx);
+			}
+		});
+		
+		collectibleManager.collectibles.forEach(function(collectible){
+			if(game.onScreen(collectible.obj,collectible.image,canvas)){
+				
+				collectibleManager.draw(collectible,ctx);
+			}
+		});
+		hudManager.show(game_variables.lvl,ctx,0.5);
    }
 
 }
 
-game.keyboard();
+game.controllers();
 game.time();

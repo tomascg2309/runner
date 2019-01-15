@@ -22,7 +22,7 @@ class BackgroundManager extends PhysicalObject{
 			// Left Background
 			ctx.drawImage(background,-fixed_x,0,support_x,background.height,this._position.x,this._position.y,support_x,background.height);
 			// Right Background
-			ctx.drawImage(background,0,0,-fixed_x,background.height,support_x,this._position.y,-fixed_x,background.height);
+			ctx.drawImage(background,0,0,-fixed_x,background.height,support_x,this._position.y,-fixed_x,background.height);   
 		}else{
 			// Left Background
 			ctx.drawImage(background,support_x,0,fixed_x,background.height,this._position.x,this._position.y,fixed_x,background.height);

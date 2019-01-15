@@ -1,7 +1,7 @@
 class PhysicalVector{
     constructor(vector){
-        this.x = vector.x;
-        this.y = vector.y;
+        this.x = vector.x || 0;
+        this.y = vector.y || 0;
     }
     
     addTo(vector2){
