@@ -20,7 +20,7 @@ var game_variables = {
 	frames: 0,
 	lvl: 'level-2',
 	speed: {x:-1,y:0},
-	playerMovesOnScreen: true
+	playerMovesOnScreen: false
 };
 
 /* HUD CONFIGURATION */
@@ -56,8 +56,6 @@ const platform_initial_state = {
 }
 
 var platformManager = new PlatformManager(platform_initial_state);
-
-console.log(platformManager);
 
 /* PLAYER CONFIGURATION */
 
@@ -132,9 +130,10 @@ var game = {
 		if(player.isOnGame()){
 			if(game_variables.playerMovesOnScreen){
 				player.setSpeed(game_variables.speed.x*(-1),game_variables.speed.y*(-1));
-
+				backgroundManager.setSpeed(0,backgroundManager.getSpeed().y);
 			}else{
-			backgroundManager.setSpeed(game_variables.speed.x,game_variables.speed.y);
+				backgroundManager.setSpeed(game_variables.speed.x,game_variables.speed.y);
+				player.setSpeed(0,player.getSpeed().y);
 			}
 		}
 
@@ -142,8 +141,6 @@ var game = {
 		if(player.isOnGame()){
 			backgroundManager.move();
 		}
-
-		console.log(backgroundManager.speed.x);
 
 		frame(game.time);
    	},

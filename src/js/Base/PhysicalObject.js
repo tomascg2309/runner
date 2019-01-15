@@ -25,6 +25,18 @@ class PhysicalObject{
         this.acceleration.x = x;
         this.acceleration.y = y;
     }
+
+    getPosition(x,y){
+        return this.position;
+    }
+
+    getSpeed(x,y){
+        return this.speed;
+    }
+
+    getAcceleration(x,y){
+        return this.acceleration;
+    }
     
     // Uniformly Accelerated Rectilinear Motion
     uarm(){
