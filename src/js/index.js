@@ -4,6 +4,7 @@ import BackgroundManager from './Scenario/BackgroundManager.js'
 import PlatformManager from './Scenario/PlatformManager.js'
 import ObstacleManager from './GameObject/ObstacleManager.js'
 import CollectibleManager from './GameObject/CollectibleManager.js'
+import Game from './Game/Game.js'
 
 var frame = window.requestAnimationFrame || 
 		    window.mozRequestAnimationFrame || 
@@ -15,7 +16,7 @@ var ctx = canvas.getContext("2d");
 
 /* GAME ENVIRONMENT VARIABLES */
 
-var game_variables = {
+var environment = {
 	jump: false,
 	gravity: {x:0,y:0.25},
 	time: 0,
@@ -65,8 +66,8 @@ var platformManager = new PlatformManager(platform_initial_state);
 const player_initial_state = {
 	position: {x:100,y:120}, // y: 235,
 	speed: {x:0,y:0},
-	acceleration: game_variables.gravity,
-	gravity: game_variables.gravity,
+	acceleration: environment.gravity,
+	gravity: environment.gravity,
 	affectedByGravity: true,
 	action: "hover",
 	frame_impulse: 0,
@@ -74,7 +75,7 @@ const player_initial_state = {
 	jumps: 1,
 	jump_limit: 1,
 	jump_speed: -6,
-	movesOnScreen: game_variables.playerMovesOnScreen
+	movesOnScreen: environment.playerMovesOnScreen
 };
 
 var player = new Player (player_initial_state);
@@ -101,12 +102,26 @@ collectibleManager.addCollectibleImage({id:'clue-1',image_source:'src/img/clues/
 collectibleManager.addCollectibleImage({id:'clue-2',image_source:'src/img/clues/clue-2.png'});
 collectibleManager.addCollectibleImage({id:'clue-3',image_source:'src/img/clues/clue-3.png'});
 
-collectibleManager.addCollectibleToGame({id:'clue-1',position:{x:1200,y:250},collidable:!game_variables.inmortality});
-collectibleManager.addCollectibleToGame({id:'clue-2',position:{x:1600,y:180},collidable:!game_variables.inmortality});
-collectibleManager.addCollectibleToGame({id:'clue-3',position:{x:2000,y:250},collidable:!game_variables.inmortality});
+collectibleManager.addCollectibleToGame({id:'clue-1',position:{x:1200,y:250},collidable:!environment.inmortality});
+collectibleManager.addCollectibleToGame({id:'clue-2',position:{x:1600,y:180},collidable:!environment.inmortality});
+collectibleManager.addCollectibleToGame({id:'clue-3',position:{x:2000,y:250},collidable:!environment.inmortality});
 
 /* GAME */
 
+var configuration = {
+	environment: environment,
+	player: player,
+	hudManager: hudManager,
+	backgroundManager: backgroundManager,
+	platformManager: platformManager,
+	obstacleManager: obstacleManager,
+	collectibleManager: collectibleManager,
+	canvas: canvas,
+	ctx: ctx
+}
+
+var game = new Game(configuration);
+/*
 var game = {
 
 	controllers: function(){
@@ -135,12 +150,12 @@ var game = {
 		}
 
 		if(tap){ 
-			game_variables.jump = true; 
+			environment.jump = true; 
 		}
 		
 	},
 
-	release: function(key){
+	release: function(event){
 		let keyboard_controllers = [32,38,87];
 		let mouse_controllers = [0];
 		
@@ -160,7 +175,7 @@ var game = {
 		}
 
 		if(free){ 
-			game_variables.jump = false; 
+			environment.jump = false; 
 			player.jumpPerformed();
 		}
 	},
@@ -174,18 +189,18 @@ var game = {
 	time: function(){
 		game.canvas();
 		
-		if(game_variables.frames < 59){
-			game_variables.frames ++;
+		if(environment.frames < 59){
+			environment.frames ++;
 		}else{
-			game_variables.time ++;
-			game_variables.frames = 0;
+			environment.time ++;
+			environment.frames = 0;
 		}
 
 		if(player.collisionWith(platformManager)){
 			player.land(platformManager);
 		}
 
-		if(game_variables.jump){
+		if(environment.jump){
 			player.impulseJump();
 			if(!player.breakFrameImpulse() && player.canJump()){
 				player.jump();
@@ -193,8 +208,8 @@ var game = {
 		}
 
 		if(player.isOnGame()){
-			if(game_variables.playerMovesOnScreen){
-				player.setSpeed(game_variables.speed.x*(-1),player.getSpeed().y);
+			if(environment.playerMovesOnScreen){
+				player.setSpeed(environment.speed.x*(-1),player.getSpeed().y);
 				backgroundManager.setSpeed(0,backgroundManager.getSpeed().y);
 				obstacleManager.obstacles.forEach(function(obstacle){
 					obstacle.obj.setSpeed(0,backgroundManager.getSpeed().y);
@@ -203,13 +218,13 @@ var game = {
 					collectible.obj.setSpeed(0,collectibleManager.getSpeed().y);
 				});
 			}else{
-				backgroundManager.setSpeed(game_variables.speed.x,game_variables.speed.y);
+				backgroundManager.setSpeed(environment.speed.x,environment.speed.y);
 				player.setSpeed(0,player.getSpeed().y);
 				obstacleManager.obstacles.forEach(function(obstacle){
-					obstacle.obj.setSpeed(game_variables.speed.x,game_variables.speed.y);
+					obstacle.obj.setSpeed(environment.speed.x,environment.speed.y);
 				});
 				collectibleManager.collectibles.forEach(function(collectible){
-					collectible.obj.setSpeed(game_variables.speed.x,game_variables.speed.y);
+					collectible.obj.setSpeed(environment.speed.x,environment.speed.y);
 				});
 			}
 		}
@@ -224,10 +239,10 @@ var game = {
 		frame(game.time);
    	},
 
-   canvas: function(){
+   	canvas: function(){
 
 	    ctx.clearRect(0,0,canvas.width,canvas.height);
-	   	backgroundManager.show(game_variables.lvl,ctx,canvas);
+	   	backgroundManager.show(environment.lvl,ctx,canvas);
 		platformManager.draw(ctx,0);
 		player.animation();
 		player.draw(ctx);
@@ -243,10 +258,10 @@ var game = {
 				collectibleManager.draw(collectible,ctx);
 			}
 		});
-		hudManager.show(game_variables.lvl,ctx,0.5);
+		hudManager.show(environment.lvl,ctx,0.5);
    }
 
 }
-
-game.controllers();
-game.time();
+*/
+game.listenEvents();
+game.time(frame,ctx);
