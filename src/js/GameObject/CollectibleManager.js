@@ -6,7 +6,6 @@ class CollectibleManager{
 	constructor(){
 		this.collectibles = [];
 		this.collectibles_images = [];
-		this.collected = 0;
 	}
 
 	getCollectibleImage(id){
@@ -26,6 +25,7 @@ class CollectibleManager{
 	addCollectibleToGame(opts){
 		this.collectibles.push({image: this.getCollectibleImage(opts.id), 
 								obj: new PhysicalObject(opts.position,null,null,0,Math.PI/30,2),
+								value: opts.value,
 								collected:false
 							    });
 	}
@@ -37,8 +37,8 @@ class CollectibleManager{
 		});
 	}
 	
-	collect(){
-		this.collected++;
+	collect(id){
+		this.collectibles[id].collected = true;
 	}
 }
 

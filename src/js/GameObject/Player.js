@@ -19,6 +19,11 @@ class Player extends PhysicalObject{
 		this.jump_speed = opt.jump_speed;
 		this.onGame = false;
 		this.movesOnScreen = opt.movesOnScreen;
+		this.collected = 0;
+		this.beaten = 0;
+		this.defeated = 0;
+		this.life = opt.life;
+		this.score = 0;
 	}
 	
 	isOnGame(){
@@ -113,22 +118,34 @@ class Player extends PhysicalObject{
 		return this.frame_impulse > this.frame_impulse_limit;
 	}
 
-	collisionWith(obj){
+	collisionWith(object, object_image){
 		var skin = this.getSkinImage();
 
 		//No colisión con plataforma de Arriba hacia Abajo
-		if((this.position.y + skin.height) < obj.position.y){return false}
+		if((this.position.y + skin.height) < object.position.y){return false}
 
 		//No colisión con plataforma de Abajo hacia Arriba
-		if(this.position.y > (obj.position.y + obj.height)){return false}
+		if(this.position.y > (object.position.y + object_image.height)){return false}
 
 		//No colisión con plataforma de Izquierda a Derecha
-		if((this.position.x + skin.width) < obj.position.x){return false}
+		if((this.position.x + skin.width) < object.position.x){return false}
 
 		//No colisión con plataforma de Derecha a Izquierda
-		if(this.position.x > (obj.position.x + obj.width)){return false}
+		if(this.position.x > (object.position.x + object_image.width)){return false}
 
 		return true;
+	}
+
+	collect() {
+		this.collected++;
+	}
+
+	receiveDamage(damage) {
+		this.life += -damage;
+	}
+
+	increaseScore() {
+		this.score++;
 	}
 }
 

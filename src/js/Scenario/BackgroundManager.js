@@ -40,6 +40,10 @@ class BackgroundManager extends PhysicalObject{
 	move(){
 		super.urm();
 	}
+
+	getDistance(){
+		return this.position.add(this._position.multiply(-1)).module();
+	}
 }
 
 export default BackgroundManager;

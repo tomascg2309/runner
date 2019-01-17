@@ -6,7 +6,6 @@ class ObstacleManager{
 	constructor(){
 		this.obstacles = [];
 		this.obstacles_images = [];
-		this.beaten = 0;
 	}
 
 	getObstacleImage(id){
@@ -27,7 +26,8 @@ class ObstacleManager{
 		this.obstacles.push({image: this.getObstacleImage(opts.id), 
 							 obj: new PhysicalObject(opts.position),
 							 collidable: opts.collidable,
-							 beaten: false
+							 was_hit: false,
+							 damage: 1
 							});
 	}
 
@@ -37,8 +37,8 @@ class ObstacleManager{
 		});
 	}
 
-	beat(){
-		this.obstacles_beaten++;
+	hitBy(id){
+		this.obstacles[id].was_hit = true;
 	}
 }
 

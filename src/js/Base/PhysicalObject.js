@@ -8,7 +8,7 @@ class PhysicalObject{
         this.acceleration = new PhysicalVector(acceleration||{x:0,y:0});
         this.teta = teta||0;
         this.motion_radius = motion_radius||0;
-        this.angular_velocity = angular_velocity||0;     
+        this.angular_velocity = angular_velocity||0;
     }
 
     setPosition(x,y){
