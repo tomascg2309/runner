@@ -14,6 +14,7 @@ class Game {
         };
         this.canvas = opt.canvas;
         this.best = 0;
+        this.has_end = false;
         this.restart_info = opt;
     }
 
@@ -36,6 +37,7 @@ class Game {
             }
             if (event.hasOwnProperty("button")) {
                 if (this.controllers.mouse.indexOf(event.button) >= 0) {
+                    console.log("click");
                     return true;
                 }
             }
@@ -182,6 +184,30 @@ class Game {
         if(this.backgroundManager.getDistance() + this.canvas.width >= this.environment.map_size) {
             this.environment.playerMovesOnScreen = true;
         }
+    }
+
+    end() { 
+        if(this.player.getLife() == 0) {
+            console.log("restart");
+            return 1;  // restart
+        }else if (this.player.getPosition().x >= this.canvas.width*0.8) {
+            if(!this.has_end){
+                if(this.player.getScore() == this.environment.goal && !this.has_end) {
+                    console.log("end");
+                    this.has_end = true;
+                    return 2;
+                }else{
+                    console.log("restart");
+                    return 1; // restart
+                }
+            } 
+        }
+
+        if(this.player.getPosition().x >= this.canvas.width + 2*this.player.getSkinImage().width){
+            this.player.stop('x');
+        }
+
+        return 0;
     }
 
     set() {

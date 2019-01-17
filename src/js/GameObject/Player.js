@@ -147,6 +147,18 @@ class Player extends PhysicalObject{
 	increaseScore() {
 		this.score++;
 	}
+
+	getPosition() {
+		return this.position;
+	}
+
+	getScore() {
+		return this.score;
+	}
+
+	getLife() {
+		return this.life;
+	}
 }
 
 export default Player;
