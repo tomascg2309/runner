@@ -81,7 +81,7 @@ class Game {
             }
         },this);
         this.collectibleManager.collectibles.forEach(function (collectible) {
-            if (this.onScreen(collectible.obj, collectible.image)) {
+            if (this.onScreen(collectible.obj, collectible.image) && !collectible.collected) {
                 this.collectibleManager.draw(collectible, ctx);
             }
         },this);

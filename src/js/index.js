@@ -105,9 +105,9 @@ collectibleManager.addCollectibleImage({id:'clue-1',image_source:'src/img/clues/
 collectibleManager.addCollectibleImage({id:'clue-2',image_source:'src/img/clues/clue-2.png'});
 collectibleManager.addCollectibleImage({id:'clue-3',image_source:'src/img/clues/clue-3.png'});
 
-collectibleManager.addCollectibleToGame({id:'clue-1',position:{x:1200,y:250},value:1});
+collectibleManager.addCollectibleToGame({id:'clue-1',position:{x:1200,y:240},value:1});
 collectibleManager.addCollectibleToGame({id:'clue-2',position:{x:1600,y:180},value:1});
-collectibleManager.addCollectibleToGame({id:'clue-3',position:{x:2000,y:250},value:1});
+collectibleManager.addCollectibleToGame({id:'clue-3',position:{x:2000,y:240},value:1});
 
 /* GAME */
 
