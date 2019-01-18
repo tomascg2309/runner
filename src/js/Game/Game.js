@@ -114,13 +114,18 @@ class Game {
         }
     }
 
-    startStopwatch() {
+    runStopwatch() {
         if (this.environment.frames < 59) {
             this.environment.frames++;
         } else {
             this.environment.time++;
             this.environment.frames = 0;
         }
+    }
+
+    resetStopwatch() {
+        this.environment.frames = 0;
+        this.environment.time = 0;
     }
 
     moveAll() {
@@ -188,16 +193,18 @@ class Game {
 
     end() { 
         if(this.player.getLife() == 0) {
-            console.log("restart");
+            // console.log("restart");
+            this.resetStopwatch();
             return 1;  // restart
         }else if (this.player.getPosition().x >= this.canvas.width*0.8) {
             if(!this.has_end){
                 if(this.player.getScore() == this.environment.goal && !this.has_end) {
-                    console.log("end");
+                    // console.log("end");
                     this.has_end = true;
                     return 2;
                 }else{
-                    console.log("restart");
+                    // console.log("restart");
+                    this.resetStopwatch();
                     return 1; // restart
                 }
             } 
@@ -210,14 +217,20 @@ class Game {
         return 0;
     }
 
-    set() {
-        this.startStopwatch();
+    run() {
+        this.runStopwatch();
         this.handleInteractions();
         this.score();
         this.usePlayer();
         this.breakScreen();
         this.moveScreen();
         this.moveAll();
+    }
+
+    play(ctx) {
+        this.render(ctx);
+		this.run();
+		return this.end();
     }
 
     updateBeforeRestart() {
@@ -234,6 +247,22 @@ class Game {
         this.collectibleManager = this.restart_info.collectibleManager;
     }
    
+    runTransition(ctx,num) {
+        this.runStopwatch();
+        this.renderTransition(ctx,num);
+        console.log(this.environment.time, this.environment.frames);
+        if(this.environment.frames = num % 60 && this.environment.time == Math.trunc(num/60)) {
+            return true;
+        }
+        return false;
+    }
+
+    renderTransition(ctx,num) {
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        let alpha = this.environment.frames/num;
+        ctx.fillStyle = "rgba(255,255,255,"+alpha.toString()+")";
+        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
 }
 
 export default Game;

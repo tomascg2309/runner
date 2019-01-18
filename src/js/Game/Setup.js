@@ -19,7 +19,7 @@ class Setup {
 
         switch(this.lvl) {
             case 'lvl-1': 
-                speed = {x:-4,y:0}; 
+                speed = {x:-8,y:0}; 
                 goal = 0;
                 map_size = 2200;
                 break;
