@@ -1,6 +1,7 @@
 class Game {
 
-    constructor(opt) {
+    constructor(opt, persistentEnvironment) {
+        
         this.environment = opt.environment;
         this.player = opt.player;
         this.hudManager = opt.hudManager;
@@ -13,18 +14,17 @@ class Game {
             mouse: [0],
         };
         this.canvas = opt.canvas;
-        this.best = 0;
         this.has_end = false;
-        this.restart_info = opt;
+        this.persistentEnvironment = persistentEnvironment;
     }
 
     listenEvents() {
         // Listen keyboard events
-        this.canvas.addEventListener("keydown", this.press.bind(this));
-        this.canvas.addEventListener("keyup", this.release.bind(this));
+        document.addEventListener("keydown", this.press.bind(this));
+        document.addEventListener("keyup", this.release.bind(this));
         // Listen mouse events
-        this.canvas.addEventListener("mousedown", this.press.bind(this));
-        this.canvas.addEventListener("mouseup", this.release.bind(this));
+        document.addEventListener("mousedown", this.press.bind(this));
+        document.addEventListener("mouseup", this.release.bind(this));
     }
 
     press(event) {
@@ -148,7 +148,7 @@ class Game {
             if (this.onScreen(obstacle.obj, obstacle.image) && this.player.collisionWith(obstacle.obj, obstacle.image) && !obstacle.was_hit) {
                 if(!this.environment.inmortality) {
                     this.player.receiveDamage(obstacle.damage);
-                    console.log("ouch! remaining life:", this.player.life);
+                    // console.log("ouch! remaining life:", this.player.life);
                 }else{
                     console.log("LOL! NO DAMAGE ;) lifes:", this.player.life);
                 }
@@ -164,7 +164,7 @@ class Game {
                 this.player.collect();
                 this.player.increaseScore();
                 this.collectibleManager.collect(aux);
-                console.log("great! collected:", this.player.collected);
+                // console.log("great! collected:", this.player.collected);
             }
             aux++;
         },this);
@@ -182,7 +182,7 @@ class Game {
     score() {
         // Depending on the kind of game, this method should be reworked
         this.player.score = this.player.collected;
-        this.best = Math.max(this.player.score,this.best);
+        this.persistentEnvironment.best = Math.max(this.player.score,this.persistentEnvironment.best);
     }
 
     breakScreen() {
@@ -193,7 +193,6 @@ class Game {
 
     end() { 
         if(this.player.getLife() == 0) {
-            // console.log("restart");
             this.resetStopwatch();
             return 1;  // restart
         }else if (this.player.getPosition().x >= this.canvas.width*0.8) {
@@ -233,25 +232,10 @@ class Game {
 		return this.end();
     }
 
-    updateBeforeRestart() {
-        // Method to update hi-score, lifes, attemps, etc.
-    }
-
-    restart() {
-        this.updateBeforeRestart();
-        this.environment = this.restart_info.environment;
-        this.player = this.restart_info.player;
-        this.backgroundManager = this.restart_info.backgroundManager;
-        this.platformManager = this.restart_info.platformManager;
-        this.obstacleManager = this.restart_info.obstacleManager;
-        this.collectibleManager = this.restart_info.collectibleManager;
-    }
-   
     runTransition(ctx,num) {
         this.runStopwatch();
         this.renderTransition(ctx,num);
-        console.log(this.environment.time, this.environment.frames);
-        if(this.environment.frames = num % 60 && this.environment.time == Math.trunc(num/60)) {
+        if(this.environment.frames == num % 60 && this.environment.time == Math.trunc(num/60)) {
             return true;
         }
         return false;
@@ -259,8 +243,8 @@ class Game {
 
     renderTransition(ctx,num) {
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        let alpha = this.environment.frames/num;
-        ctx.fillStyle = "rgba(255,255,255,"+alpha.toString()+")";
+        let alpha = 0.5+(this.environment.frames-1)/(num-1);
+        ctx.fillStyle = "rgba(0,0,0,"+alpha.toString()+")";
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }

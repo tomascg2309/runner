@@ -11,15 +11,21 @@ var ctx = canvas.getContext("2d");
 
 var lvl = 2;
 var max_lvl = 3;
-var configuration;
+var configuration = {};
+var persistentEnvironment = {};
 var game;
 var flag = 0;
 let aux_transition;
 
 var gameaux = {
 	start: function(){
-		configuration = new Setup(lvl,canvas).getConfiguration();
-		game = new Game(configuration, lvl);
+		var setup = new Setup(lvl,canvas);
+		configuration = setup.getSetupConfiguration();
+		
+		if(flag != 1){
+			persistentEnvironment = setup.getPersistentEnvironment();
+		}
+		game = new Game(configuration,persistentEnvironment);
 		aux_transition = false;
 		flag = 0;
 		game.listenEvents();
@@ -31,13 +37,12 @@ var gameaux = {
 				break; 
 			case 1: // Restart
 				// Try again window	
-				/*
-				aux_transition = game.runTransition(ctx,30);
+				
+				aux_transition = game.runTransition(ctx,20);
 				if(aux_transition){	
 					gameaux.start(); 
+					flag = 0;
 				}
-				*/
-				gameaux.start(); 
 				break; 
 			case 2: // Level complete
 				if(lvl<max_lvl) {
@@ -46,7 +51,7 @@ var gameaux = {
 					gameaux.start();
 				}else{
 					flag = game.play(ctx);
-					console.log("thanks for playing");
+					console.log("Thanks for playing");
 					// End screen
 				}
 				break;

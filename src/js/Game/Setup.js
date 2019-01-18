@@ -37,18 +37,26 @@ class Setup {
 
         let environment = {
             jump: false,
-            gravity: {x:0,y:0.25},
-            time: 0,
-            frames: 0,
+            gravity: {x:0,y:0.25},    
             lvl: this.lvl,
             speed: Object.assign({},speed),
-            playerMovesOnScreen: false,
             inmortality: false,
             goal: goal,
-            map_size: map_size
+            map_size: map_size,
+            playerMovesOnScreen: false,
+            time: 0,
+            frames: 0
         };
 
         return environment;
+    }
+
+    getPersistentEnvironment() {
+        let persistentEnvironment = {
+            best: 0 
+        }
+
+        return persistentEnvironment;
     }
 
     getHudManager() {
@@ -109,7 +117,7 @@ class Setup {
             jump_limit: 1,
             jump_speed: -6,
             movesOnScreen: this.getEnvironment().playerMovesOnScreen,
-            life: 3
+            life: 1
         };
         
         let player = new Player (player_initial_state);
@@ -185,8 +193,8 @@ class Setup {
         return collectibleManager;
     }
 
-    getConfiguration() {
-        let configuration = {
+    getSetupConfiguration() {
+        let configuration = { 
             environment: this.getEnvironment(),
             hudManager: this.getHudManager(),
             backgroundManager: this.getBackgroundManager(),
@@ -198,6 +206,7 @@ class Setup {
         }
         return configuration;
     }
+    
 }
 
 export default Setup;
