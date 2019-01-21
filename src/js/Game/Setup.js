@@ -67,9 +67,9 @@ class Setup {
         let hudManager = new HudManager(hud_options);
         
         switch(this.lvl) {
-            case 'lvl-1': hudManager.addHud({id:this.lvl,image_source:'src/img/screen/screen-level-1.png'}); break;
-            case 'lvl-2': hudManager.addHud({id:this.lvl,image_source:'src/img/screen/screen-level-2.png'}); break;
-            case 'lvl-3': hudManager.addHud({id:this.lvl,image_source:'src/img/screen/screen-level-3.png'}); break;
+            case 'lvl-1': hudManager.addHud({id:this.lvl,image_source:'src/assets/img/screen/screen-level-1.png'}); break;
+            case 'lvl-2': hudManager.addHud({id:this.lvl,image_source:'src/assets/img/screen/screen-level-2.png'}); break;
+            case 'lvl-3': hudManager.addHud({id:this.lvl,image_source:'src/assets/img/screen/screen-level-3.png'}); break;
         } 
 
         return hudManager;
@@ -83,9 +83,9 @@ class Setup {
         let backgroundManager = new BackgroundManager(background_options);
         
         switch(this.lvl) {
-            case 'lvl-1': backgroundManager.addBackground({id:this.lvl,image_source:'src/img/background/bg-green.png'}); break;
-            case 'lvl-2': backgroundManager.addBackground({id:this.lvl,image_source:'src/img/background/bg-purple.png'}); break;
-            case 'lvl-3': backgroundManager.addBackground({id:this.lvl,image_source:'src/img/background/bg-red.png'}); break;
+            case 'lvl-1': backgroundManager.addBackground({id:this.lvl,image_source:'src/assets/img/background/bg-green.png'}); break;
+            case 'lvl-2': backgroundManager.addBackground({id:this.lvl,image_source:'src/assets/img/background/bg-purple.png'}); break;
+            case 'lvl-3': backgroundManager.addBackground({id:this.lvl,image_source:'src/assets/img/background/bg-red.png'}); break;
         }
 
         return backgroundManager;
@@ -122,8 +122,8 @@ class Setup {
         
         let player = new Player (player_initial_state);
         
-        player.addSkin({id:'hover',image_source:'src/img/player/player-hover.png'});
-        player.addSkin({id:'jump',image_source:'src/img/player/player-jump.png'});
+        player.addSkin({id:'hover',image_source:'src/assets/img/player/player-hover.png'});
+        player.addSkin({id:'jump',image_source:'src/assets/img/player/player-jump.png'});
 
         return player;
     }
@@ -134,16 +134,16 @@ class Setup {
         // Choosing specific obstacles depending on the game level
         switch(this.lvl) {
             case 'lvl-1': 
-                obstacleManager.addObstacleImage({id:'column',image_source:'src/img/obstacles/column.png'});
-                obstacleManager.addObstacleImage({id:'rock',image_source:'src/img/obstacles/rock.png'});    
+                obstacleManager.addObstacleImage({id:'column',image_source:'src/assets/img/obstacles/column.png'});
+                obstacleManager.addObstacleImage({id:'rock',image_source:'src/assets/img/obstacles/rock.png'});    
                 break;
             case 'lvl-2': 
-                obstacleManager.addObstacleImage({id:'column',image_source:'src/img/obstacles/column.png'});
-                obstacleManager.addObstacleImage({id:'rock',image_source:'src/img/obstacles/rock.png'});    
+                obstacleManager.addObstacleImage({id:'column',image_source:'src/assets/img/obstacles/column.png'});
+                obstacleManager.addObstacleImage({id:'rock',image_source:'src/assets/img/obstacles/rock.png'});    
                 break;
             case 'lvl-3': 
-                obstacleManager.addObstacleImage({id:'column',image_source:'src/img/obstacles/column.png'});
-                obstacleManager.addObstacleImage({id:'rock',image_source:'src/img/obstacles/rock.png'});    
+                obstacleManager.addObstacleImage({id:'column',image_source:'src/assets/img/obstacles/column.png'});
+                obstacleManager.addObstacleImage({id:'rock',image_source:'src/assets/img/obstacles/rock.png'});    
                 break;
         }
         
@@ -169,13 +169,13 @@ class Setup {
         // Choosing specific collectibles depending on the game level
         switch(this.lvl) {
             case 'lvl-1': 
-                collectibleManager.addCollectibleImage({id:'clue-1',image_source:'src/img/clues/clue-1.png'});
+                collectibleManager.addCollectibleImage({id:'clue-1',image_source:'src/assets/img/clues/clue-1.png'});
                 break;
             case 'lvl-2': 
-                collectibleManager.addCollectibleImage({id:'clue-2',image_source:'src/img/clues/clue-2.png'});
+                collectibleManager.addCollectibleImage({id:'clue-2',image_source:'src/assets/img/clues/clue-2.png'});
                 break;
             case 'lvl-3': 
-                collectibleManager.addCollectibleImage({id:'clue-3',image_source:'src/img/clues/clue-3.png'});
+                collectibleManager.addCollectibleImage({id:'clue-3',image_source:'src/assets/img/clues/clue-3.png'});
                 break;
         }
 

@@ -67,8 +67,15 @@ class Game {
         }
     }
 
-    onScreen(object, object_image) {
+    isOnScreen(object, object_image) {
         return object.position.x <= this.canvas.width || object.position.x + object_image.width <= 0;
+    }
+
+    showStats(ctx) {
+        ctx.font = '20px "8bit"';
+        ctx.fillStyle = 'white';
+        let text = "CLUES: "+ this.player.score.toString()+"/"+this.environment.goal;
+        ctx.fillText(text, 450, 40);
     }
 
     render(ctx) {
@@ -78,21 +85,22 @@ class Game {
         this.player.animation();
         this.player.draw(ctx);
         this.obstacleManager.obstacles.forEach(function (obstacle) {
-            if (this.onScreen(obstacle.obj, obstacle.image)) {
+            if (this.isOnScreen(obstacle.obj, obstacle.image)) {
                 this.obstacleManager.draw(obstacle, ctx);
             }
         },this);
         this.collectibleManager.collectibles.forEach(function (collectible) {
-            if (this.onScreen(collectible.obj, collectible.image) && !collectible.collected) {
+            if (this.isOnScreen(collectible.obj, collectible.image) && !collectible.collected) {
                 this.collectibleManager.draw(collectible, ctx);
             }
         },this);
         this.hudManager.show(this.environment.lvl, ctx);
+        this.showStats(ctx);
     }
 
     moveScreen() {
         if (this.player.isOnGame()) {
-            if (this.environment.playerMovesOnScreen) {
+            if (this.environment.playerMovesisOnScreen) {
                 this.player.setSpeed(this.environment.speed.x * (-1), this.player.getSpeed().y);
                 this.backgroundManager.setSpeed(0, this.backgroundManager.getSpeed().y);
                 this.obstacleManager.obstacles.forEach(function (obstacle) {
@@ -145,7 +153,7 @@ class Game {
         let aux = 0;
         
         this.obstacleManager.obstacles.forEach(function (obstacle) {
-            if (this.onScreen(obstacle.obj, obstacle.image) && this.player.collisionWith(obstacle.obj, obstacle.image) && !obstacle.was_hit) {
+            if (this.isOnScreen(obstacle.obj, obstacle.image) && this.player.collisionWith(obstacle.obj, obstacle.image) && !obstacle.was_hit) {
                 if(!this.environment.inmortality) {
                     this.player.receiveDamage(obstacle.damage);
                     // console.log("ouch! remaining life:", this.player.life);
@@ -160,7 +168,7 @@ class Game {
         aux = 0;
         
         this.collectibleManager.collectibles.forEach(function (collectible) {
-            if (this.onScreen(collectible.obj, collectible.image) && this.player.collisionWith(collectible.obj, collectible.image) && !collectible.collected) {
+            if (this.isOnScreen(collectible.obj, collectible.image) && this.player.collisionWith(collectible.obj, collectible.image) && !collectible.collected) {
                 this.player.collect();
                 this.player.increaseScore();
                 this.collectibleManager.collect(aux);
@@ -187,7 +195,7 @@ class Game {
 
     breakScreen() {
         if(this.backgroundManager.getDistance() + this.canvas.width >= this.environment.map_size) {
-            this.environment.playerMovesOnScreen = true;
+            this.environment.playerMovesisOnScreen = true;
         }
     }
 
